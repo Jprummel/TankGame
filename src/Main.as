@@ -5,6 +5,8 @@ package
 	import flash.events.KeyboardEvent;
 	import flash.ui.Keyboard;
 	
+	import flash.geom.Point;
+	
 	/**
 	 * ...
 	 * @author Jordi Prummel
@@ -17,6 +19,9 @@ package
 		private var sPressed:Boolean = false;
 		private var dPressed:Boolean = false;
 		
+		private var input:Point;
+		private var speed:Number =  0;
+		
 		
 		
 		public function Main():void 
@@ -27,6 +32,9 @@ package
 		
 		private function init(e:Event = null):void
 		{
+			
+			input = new Point();
+			
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 			// entry point
 			tank = new Tank();
@@ -42,23 +50,34 @@ package
 		}
 		
 		private function loop(e:Event):void 
-		{
-			if (wPressed)
-			{
-				tank.y -= 5;
-			}
-			if (aPressed)
-			{
-				tank.x -= 5;
-			}
-			if (sPressed)
-			{
-				tank.y += 5;
-			}
-			if (dPressed)
-			{
-				tank.x += 5;
-			}
+		{		
+			//Y as gebruikt sin
+			//X as gebruikt cos
+			//ymove = sin(rot);
+			//xmove = cos(rot);
+			//rot is een radian en geen angle
+			// we moeten onze angle omzetten naar een radian
+			
+			//degrees * Math.PI / 180;
+			//radians * 180 / Math.PI;
+			
+			speed = input.y * 5;
+			
+			tank.rotation += input.x * 5;
+			
+			var radians:Number = tank.rotation * Math.PI / 180;
+			var xMove:Number =  Math.cos(radians);
+			var yMove:Number = Math.sin(radians);
+			
+			tank.x += xMove * -speed;
+			tank.y += yMove * -speed;
+			
+			var diffX:Number = mouseX - tank.x;
+			var diffY:Number = mouseY - tank.y;
+			radians = Math.atan2(diffY, diffX)
+			var degrees:Number = radians * 180 / Math.PI;
+			
+			tank.turnTurret(degrees - tank.rotation);
 			
 			
 		}
@@ -68,22 +87,23 @@ package
 			if (e.keyCode == Keyboard.W)
 			{
 				//W is ingedrukt
-				wPressed = true;
+				input.y = -1;
 			}
 			if (e.keyCode == Keyboard.A)
 			{
 				//A is ingedrukt
-				aPressed = true;
+				input.x = -1;
 			}
 			if (e.keyCode == Keyboard.S)
 			{
 				//S is ingedrukt
-				sPressed = true;
+				input.y = 1;
+			
 			}
 			if (e.keyCode == Keyboard.D)
 			{
-				//D is ingedrukt
-				dPressed = true;
+				//D is ingedrukt				
+				input.x = 1;
 			}
 		
 		}
@@ -93,22 +113,22 @@ package
 			if (e.keyCode == Keyboard.W)
 			{
 				//W is losgelaten
-				wPressed = false;
+				input.y = 0;
 			}
 			if (e.keyCode == Keyboard.A)
 			{
 				//A is losgelaten
-				aPressed = false;
+				input.x = 0;
 			}
 			if (e.keyCode == Keyboard.S)
 			{
 				//S is losgelaten
-				sPressed = false;
+				input.y = 0;
 			}
 			if (e.keyCode == Keyboard.D)
 			{
 				//D is losgelaten
-				dPressed = false;
+				input.x = 0;
 			}
 		}
 	}

@@ -20,6 +20,11 @@ package
 			this.addChild(tankTurrerArt);
 		}
 		
+		public function turnTurret(rotation:Number)
+		{
+			tankTurrerArt.rotation = rotation;
+		}
+		
 	}
 
 }
